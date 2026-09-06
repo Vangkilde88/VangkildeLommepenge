@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8">
+
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="VangkildeLommepenge">
+
+  <meta name="theme-color" content="#fff8e7">
+
+  <title>VangkildeLommepenge</title>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+      background:
+        linear-gradient(
+          160deg,
+          #fff7d6,
+          #e7f7ff 45%,
+          #f8e8ff 100%
+        );
+
+      color: #243047;
+      min-height: 100vh;
+    }
+
+    .app {
+      width: min(1050px, 100%);
+      margin: auto;
+      padding: 20px;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 22px 10px 16px;
+    }
+
+    .hero-icon {
+      font-size: 64px;
+    }
+
+    h1 {
+      margin: 4px 0;
+      font-size: 38px;
+    }
+
+    .subtitle {
+      margin: 8px auto;
+      color: #657085;
+      font-size: 18px;
+      max-width: 550px;
+    }
+
+
+    /* TASKS */
+
+    .tasks {
+      display: grid;
+      grid-template-columns:
+        repeat(auto-fit, minmax(290px, 1fr));
+
+      gap: 18px;
+      margin-top: 20px;
+    }
+
+    .task-card {
+      background: rgba(255,255,255,.93);
+      border-radius: 26px;
+      padding: 20px;
+
+      box-shadow:
+        0 8px 30px rgba(37,55,88,.10);
+
+      position: relative;
+      overflow: hidden;
+
+      transition:
+        transform .15s ease,
+        box-shadow .15s ease;
+    }
+
+    .task-card:active {
+      transform: scale(.985);
+    }
+
+    .task-card::before {
+      content: "";
+      position: absolute;
+      height: 8px;
+      left: 0;
+      right: 0;
+      top: 0;
+      background:
+        linear-gradient(
+          90deg,
+          #ffca5c,
+          #7ed9ff,
+          #bc8cff,
+          #75e3a0
+        );
+    }
+
+    .task-picture {
+      width: 90px;
+      height: 90px;
+
+      margin: 6px auto 12px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 24px;
+
+      background:
+        linear-gradient(
+          145deg,
+          #fff3ba,
+          #e8f6ff
+        );
+
+      font-size: 58px;
+
+      box-shadow:
+        inset 0 0 0 2px rgba(255,255,255,.7);
+    }
+
+    .task-title {
+      text-align: center;
+      font-size: 21px;
+      font-weight: 800;
+
+      min-height: 54px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .task-description {
+      text-align: center;
+      color: #6d7586;
+      font-size: 14px;
+      min-height: 20px;
+      margin-bottom: 8px;
+    }
+
+    .money {
+      text-align: center;
+
+      display: block;
+
+      width: max-content;
+      margin: 8px auto 16px;
+
+      background: #dff7e8;
+      color: #167443;
+
+      padding: 7px 14px;
+      border-radius: 999px;
+
+      font-size: 22px;
+      font-weight: 900;
+    }
+
+    select {
+      width: 100%;
+
+      padding: 14px;
+
+      border-radius: 14px;
+      border: 2px solid #dfe5ef;
+
+      background: white;
+
+      font-size: 17px;
+      color: #29344a;
+
+      margin-bottom: 10px;
+    }
+
+    .complete-button {
+      width: 100%;
+
+      border: 0;
+      border-radius: 15px;
+
+      padding: 15px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #586cff,
+          #8c62ef
+        );
+
+      color: white;
+
+      font-weight: 850;
+      font-size: 17px;
+
+      cursor: pointer;
+
+      box-shadow:
+        0 5px 14px rgba(92,88,216,.25);
+    }
+
+    .complete-button:active {
+      transform: scale(.98);
+    }
+
+
+    /* BALANCES */
+
+    .balance-section {
+      margin-top: 32px;
+
+      background: rgba(255,255,255,.94);
+
+      border-radius: 28px;
+
+      padding: 24px;
+
+      box-shadow:
+        0 10px 35px rgba(37,55,88,.10);
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 28px;
+      margin: 0 0 18px;
+    }
+
+    .balances {
+      display: grid;
+
+      grid-template-columns:
+        repeat(4, 1fr);
+
+      gap: 12px;
+    }
+
+    .balance {
+      border-radius: 20px;
+      padding: 18px 8px;
+
+      text-align: center;
+
+      background:
+        linear-gradient(
+          145deg,
+          #f7fbff,
+          #fff
+        );
+
+      border: 2px solid #edf1f7;
+    }
+
+    .avatar {
+      font-size: 34px;
+    }
+
+    .child-name {
+      font-weight: 800;
+      margin-top: 5px;
+    }
+
+    .balance-money {
+      font-size: 27px;
+      font-weight: 900;
+      margin-top: 6px;
+      color: #17754b;
+    }
+
+
+    /* HISTORY */
+
+    .history-section {
+      margin-top: 24px;
+
+      background: white;
+
+      border-radius: 25px;
+
+      padding: 20px;
+
+      box-shadow:
+        0 8px 25px rgba(37,55,88,.08);
+    }
+
+    .history {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .history-item {
+      display: grid;
+
+      grid-template-columns:
+        1fr auto;
+
+      gap: 10px;
+
+      padding: 12px 10px;
+
+      border-bottom: 1px solid #edf0f4;
+    }
+
+    .history-main {
+      font-weight: 700;
+    }
+
+    .history-time {
+      display: block;
+      color: #8891a1;
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    .history-money {
+      color: #17754b;
+      font-weight: 900;
+    }
+
+    .empty-history {
+      color: #8a93a3;
+      text-align: center;
+      padding: 15px;
+    }
+
+
+    /* PARENTS */
+
+    .parent-section {
+      margin-top: 25px;
+      margin-bottom: 30px;
+
+      background: #29344a;
+
+      color: white;
+
+      border-radius: 25px;
+
+      padding: 20px;
+    }
+
+    .parent-section h2 {
+      margin-top: 0;
+    }
+
+    .parent-note {
+      color: #ccd2dd;
+      font-size: 14px;
+    }
+
+    .parent-button {
+      border: 0;
+
+      border-radius: 14px;
+
+      padding: 13px 17px;
+
+      font-size: 16px;
+      font-weight: 800;
+
+      background: #ffcf69;
+      color: #29344a;
+
+      cursor: pointer;
+    }
+
+
+    /* MODALS */
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+
+      background: rgba(29,36,52,.50);
+
+      display: none;
+
+      align-items: center;
+      justify-content: center;
+
+      z-index: 5000;
+
+      padding: 20px;
+    }
+
+    .modal {
+      background: white;
+      color: #29344a;
+
+      width: min(390px,100%);
+
+      border-radius: 28px;
+
+      padding: 27px;
+
+      text-align: center;
+
+      box-shadow:
+        0 20px 60px rgba(0,0,0,.25);
+    }
+
+    .modal-icon {
+      font-size: 60px;
+    }
+
+    .modal h2 {
+      font-size: 27px;
+      margin: 8px 0;
+    }
+
+    .modal p {
+      color: #697386;
+    }
+
+    .modal input,
+    .modal select {
+      width: 100%;
+
+      padding: 14px;
+
+      border-radius: 14px;
+
+      border: 2px solid #dfe5ef;
+
+      font-size: 18px;
+
+      margin: 5px 0 10px;
+    }
+
+    .modal input {
+      text-align: center;
+    }
+
+    .modal-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+      margin-top: 10px;
+    }
+
+    .modal-button {
+      border: 0;
+      border-radius: 14px;
+
+      padding: 13px;
+
+      font-size: 16px;
+      font-weight: 800;
+
+      cursor: pointer;
+    }
+
+    .cancel {
+      background: #edf0f5;
+      color: #414b60;
+    }
+
+    .confirm {
+      background: #5268ef;
+      color: white;
+    }
+
+    .danger {
+      background: #e8505b;
+      color: white;
+    }
+
+    .error {
+      color: #c52d3a;
+      font-weight: 700;
+      min-height: 20px;
+    }
+
+
+    /* SUCCESS */
+
+    .success {
+      position: fixed;
+
+      top: 50%;
+      left: 50%;
+
+      transform:
+        translate(-50%, -50%)
+        scale(.8);
+
+      z-index: 10000;
+
+      background: white;
+
+      min-width: 280px;
+
+      text-align: center;
+
+      padding: 30px;
+
+      border-radius: 28px;
+
+      box-shadow:
+        0 18px 60px rgba(0,0,0,.26);
+
+      animation: pop .35s ease forwards;
+    }
+
+    .success-big {
+      font-size: 65px;
+    }
+
+    @keyframes pop {
+      to {
+        transform:
+          translate(-50%, -50%)
+          scale(1);
+      }
+    }
+
+
+    .confetti {
+      position: fixed;
+      top: -30px;
+
+      pointer-events: none;
+
+      z-index: 9999;
+
+      animation: fall linear forwards;
+    }
+
+    @keyframes fall {
+      to {
+        transform:
+          translateY(110vh)
+          rotate(720deg);
+
+        opacity: .8;
+      }
+    }
+
+
+    @media(max-width: 700px) {
+
+      .app {
+        padding: 12px;
+      }
+
+      h1 {
+        font-size: 30px;
+      }
+
+      .balances {
+        grid-template-columns:
+          1fr 1fr;
+      }
+
+      .tasks {
+        grid-template-columns:
+          1fr;
+      }
+
+    }
+
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <div class="hero">
+
+    <div class="hero-icon">
+      💰✨
+    </div>
+
+    <h1>
+      VangkildeLommepenge
+    </h1>
+
+    <div class="subtitle">
+      Hjælp til derhjemme, tjen lommepenge
+      og se din opsparing vokse!
+      🚀
+    </div>
+
+  </div>
+
+
+  <div class="tasks" id="tasks"></div>
+
+
+  <section class="balance-section">
+
+    <h2 class="section-title">
+      💰 Jeres lommepenge
+    </h2>
+
+    <div class="balances">
+
+      <div class="balance">
+        <div class="avatar">🚴</div>
+        <div class="child-name">Vester</div>
+        <div id="balance-Vester"
+             class="balance-money">
+          0 kr.
+        </div>
+      </div>
+
+
+      <div class="balance">
+        <div class="avatar">⚽</div>
+        <div class="child-name">Bertil</div>
+        <div id="balance-Bertil"
+             class="balance-money">
+          0 kr.
+        </div>
+      </div>
+
+
+      <div class="balance">
+        <div class="avatar">🚴</div>
+        <div class="child-name">Arthur</div>
+        <div id="balance-Arthur"
+             class="balance-money">
+          0 kr.
+        </div>
+      </div>
+
+
+      <div class="balance">
+        <div class="avatar">⭐</div>
+        <div class="child-name">Leonora</div>
+        <div id="balance-Leonora"
+             class="balance-money">
+          0 kr.
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <section class="history-section">
+
+    <h2 class="section-title">
+      🧾 Seneste opgaver
+    </h2>
+
+    <div id="history"
+         class="history">
+    </div>
+
+  </section>
+
+
+  <section class="parent-section">
+
+    <h2>
+      🔐 Forældre
+    </h2>
+
+    <p class="parent-note">
+      Når lommepengene er overført til barnets
+      bankkonto, kan saldoen nulstilles her.
+    </p>
+
+    <button
+      class="parent-button"
+      onclick="openReset()">
+
+      💳 Udbetal / nulstil konto
+
+    </button>
+
+  </section>
+
+</div>
+
+
+
+<div id="resetOverlay"
+     class="overlay">
+
+  <div class="modal">
+
+    <div class="modal-icon">
+      🔐
+    </div>
+
+    <h2>
+      Forældreadgang
+    </h2>
+
+    <p>
+      Vælg barn og indtast kode.
+    </p>
+
+    <select id="resetChild">
+
+      <option value="">
+        Vælg barn
+      </option>
+
+      <option>Vester</option>
+      <option>Bertil</option>
+      <option>Arthur</option>
+      <option>Leonora</option>
+
+    </select>
+
+    <input
+      id="resetPin"
+      type="password"
+      inputmode="numeric"
+      maxlength="4"
+      placeholder="Kode">
+
+    <div id="resetError"
+         class="error">
+    </div>
+
+
+    <div class="modal-actions">
+
+      <button
+        class="modal-button cancel"
+        onclick="closeReset()">
+
+        Annuller
+
+      </button>
+
+      <button
+        class="modal-button danger"
+        onclick="resetAccount()">
+
+        Nulstil
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+<script>
+
+const children =
+[
+  "Vester",
+  "Bertil",
+  "Arthur",
+  "Leonora"
+];
+
+
+const tasks =
+[
+  {
+    icon: "🍽️",
+    name: "Tøm opvaskemaskinen",
+    description: "",
+    value: 3
+  },
+
+  {
+    icon: "🗑️",
+    name: "Gå ud med skrald",
+    description: "",
+    value: 2
+  },
+
+  {
+    icon: "🐕",
+    name: "Gåtur med Herman",
+    description:
+      "Minimum 1 km / cirka 10 minutter",
+    value: 10
+  },
+
+  {
+    icon: "🛏️",
+    name: "Red din seng",
+    description: "",
+    value: 2
+  },
+
+  {
+    icon: "🥛",
+    name:
+      "Tag glas, flasker og opvask ned fra værelset",
+    description: "",
+    value: 2
+  },
+
+  {
+    icon: "📖",
+    name: "Læs 10 minutter i en bog",
+    description: "",
+    value: 3
+  }
+];
+
+
+function emptyData()
+{
+  return {
+    balances:
+    {
+      Vester: 0,
+      Bertil: 0,
+      Arthur: 0,
+      Leonora: 0
+    },
+
+    history: []
+  };
+}
+
+
+function loadData()
+{
+  const saved =
+    localStorage.getItem(
+      "vangkildeLommepenge"
+    );
+
+  if (!saved)
+  {
+    return emptyData();
+  }
+
+  try
+  {
+    return JSON.parse(saved);
+  }
+  catch
+  {
+    return emptyData();
+  }
+}
+
+
+let data =
+  loadData();
+
+
+function saveData()
+{
+  localStorage.setItem(
+    "vangkildeLommepenge",
+    JSON.stringify(data)
+  );
+}
+
+
+function buildTasks()
+{
+  const area =
+    document.getElementById("tasks");
+
+  area.innerHTML = "";
+
+
+  tasks.forEach(
+    (task,index) =>
+    {
+
+      const card =
+        document.createElement("div");
+
+      card.className =
+        "task-card";
+
+
+      const options =
+        children
+        .map(
+          child =>
+          `<option value="${child}">
+            ${child}
+          </option>`
+        )
+        .join("");
+
+
+      card.innerHTML =
+      `
+
+        <div class="task-picture">
+          ${task.icon}
+        </div>
+
+        <div class="task-title">
+          ${task.name}
+        </div>
+
+        <div class="task-description">
+          ${task.description}
+        </div>
+
+        <div class="money">
+          +${task.value} kr.
+        </div>
+
+
+        <select id="task-child-${index}">
+
+          <option value="">
+            👤 Hvem har gjort det?
+          </option>
+
+          ${options}
+
+        </select>
+
+
+        <button
+          class="complete-button"
+          onclick="completeTask(${index})">
+
+          ✅ OPGAVE FULDFØRT
+
+        </button>
+
+      `;
+
+      area.appendChild(card);
+
+    }
+  );
+}
+
+
+function completeTask(index)
+{
+  const selector =
+    document.getElementById(
+      "task-child-" + index
+    );
+
+  const child =
+    selector.value;
+
+
+  if (!child)
+  {
+    alert(
+      "Vælg først hvem der har lavet opgaven 😊"
+    );
+
+    return;
+  }
+
+
+  const task =
+    tasks[index];
+
+
+  data.balances[child] +=
+    task.value;
+
+
+  data.history.unshift(
+    {
+      child: child,
+      task: task.name,
+      value: task.value,
+      time: Date.now()
+    }
+  );
+
+
+  data.history =
+    data.history.slice(0,50);
+
+
+  saveData();
+
+  updateScreen();
+
+  selector.value = "";
+
+  showSuccess(
+    child,
+    task
+  );
+}
+
+
+function updateScreen()
+{
+  children.forEach(
+    child =>
+    {
+
+      document.getElementById(
+        "balance-" + child
+      ).textContent =
+        data.balances[child]
+        + " kr.";
+
+    }
+  );
+
+
+  buildHistory();
+}
+
+
+function buildHistory()
+{
+  const area =
+    document.getElementById(
+      "history"
+    );
+
+
+  if (data.history.length === 0)
+  {
+    area.innerHTML =
+      `
+      <div class="empty-history">
+        Ingen opgaver endnu.
+        Kom i gang! 🚀
+      </div>
+      `;
+
+    return;
+  }
+
+
+  area.innerHTML =
+    data.history
+    .slice(0,12)
+    .map(
+      item =>
+      {
+
+        const date =
+          new Date(
+            item.time
+          );
+
+
+        const time =
+          date.toLocaleString(
+            "da-DK",
+            {
+              day: "2-digit",
+              month: "2-digit",
+              hour: "2-digit",
+              minute: "2-digit"
+            }
+          );
+
+
+        return `
+          <div class="history-item">
+
+            <div>
+
+              <div class="history-main">
+
+                ${item.child}
+                ·
+                ${item.task}
+
+              </div>
+
+              <span class="history-time">
+                ${time}
+              </span>
+
+            </div>
+
+            <div class="history-money">
+              +${item.value} kr.
+            </div>
+
+          </div>
+        `;
+
+      }
+    )
+    .join("");
+}
+
+
+function showSuccess(
+  child,
+  task
+)
+{
+  launchConfetti();
+
+
+  const box =
+    document.createElement(
+      "div"
+    );
+
+
+  box.className =
+    "success";
+
+
+  box.innerHTML =
+  `
+
+    <div class="success-big">
+      🎉💰
+    </div>
+
+    <h2>
+      Godt arbejde,
+      ${child}!
+    </h2>
+
+    <p>
+      ${task.name}
+    </p>
+
+    <h2 style="color:#17754b;">
+      +${task.value} kr.
+    </h2>
+
+  `;
+
+
+  document.body.appendChild(
+    box
+  );
+
+
+  setTimeout(
+    () =>
+    {
+      box.remove();
+    },
+
+    2200
+  );
+}
+
+
+function launchConfetti()
+{
+  const symbols =
+  [
+    "🎉",
+    "✨",
+    "💰",
+    "⭐",
+    "🪙"
+  ];
+
+
+  for (
+    let i = 0;
+    i < 45;
+    i++
+  )
+  {
+
+    const piece =
+      document.createElement(
+        "div"
+      );
+
+
+    piece.className =
+      "confetti";
+
+
+    piece.textContent =
+      symbols[
+        Math.floor(
+          Math.random()
+          *
+          symbols.length
+        )
+      ];
+
+
+    piece.style.left =
+      Math.random()
+      * 100
+      + "vw";
+
+
+    piece.style.fontSize =
+      (
+        18
+        +
+        Math.random()
+        * 18
+      )
+      + "px";
+
+
+    piece.style.animationDuration =
+      (
+        2
+        +
+        Math.random()
+        * 2.5
+      )
+      + "s";
+
+
+    document.body.appendChild(
+      piece
+    );
+
+
+    setTimeout(
+      () =>
+      {
+        piece.remove();
+      },
+
+      5000
+    );
+
+  }
+}
+
+
+function openReset()
+{
+  document.getElementById(
+    "resetOverlay"
+  ).style.display =
+    "flex";
+
+
+  document.getElementById(
+    "resetPin"
+  ).value =
+    "";
+
+
+  document.getElementById(
+    "resetError"
+  ).textContent =
+    "";
+}
+
+
+function closeReset()
+{
+  document.getElementById(
+    "resetOverlay"
+  ).style.display =
+    "none";
+}
+
+
+function resetAccount()
+{
+  const child =
+    document.getElementById(
+      "resetChild"
+    ).value;
+
+
+  const pin =
+    document.getElementById(
+      "resetPin"
+    ).value;
+
+
+  const error =
+    document.getElementById(
+      "resetError"
+    );
+
+
+  if (!child)
+  {
+    error.textContent =
+      "Vælg et barn.";
+
+    return;
+  }
+
+
+  if (pin !== "0605")
+  {
+    error.textContent =
+      "Forkert kode.";
+
+    return;
+  }
+
+
+  const amount =
+    data.balances[child];
+
+
+  if (amount === 0)
+  {
+    error.textContent =
+      child
+      +
+      " har ingen penge at udbetale.";
+
+    return;
+  }
+
+
+  const okay =
+    confirm(
+      "Udbetal "
+      +
+      amount
+      +
+      " kr. til "
+      +
+      child
+      +
+      " og nulstil saldoen?"
+    );
+
+
+  if (!okay)
+  {
+    return;
+  }
+
+
+  data.history.unshift(
+    {
+      child: child,
+      task:
+        "💳 Udbetalt til bankkonto",
+      value:
+        -amount,
+      time:
+        Date.now()
+    }
+  );
+
+
+  data.balances[child] =
+    0;
+
+
+  saveData();
+
+  updateScreen();
+
+  closeReset();
+}
+
+
+buildTasks();
+updateScreen();
+
+</script>
+
+</body>
+</html>
