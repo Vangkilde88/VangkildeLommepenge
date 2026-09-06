@@ -10,143 +10,129 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="VangkildeLommepenge">
 
-  <meta name="theme-color" content="#fff8e7">
+  <meta name="theme-color" content="#fff7d6">
 
   <title>VangkildeLommepenge</title>
 
   <style>
-
     * {
       box-sizing: border-box;
     }
 
     body {
       margin: 0;
-      font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #243047;
 
       background:
-        linear-gradient(
-          160deg,
-          #fff7d6,
-          #e7f7ff 45%,
-          #f8e8ff 100%
-        );
+        radial-gradient(circle at 15% 10%, #fff0a8 0, transparent 23%),
+        radial-gradient(circle at 90% 18%, #d9c5ff 0, transparent 22%),
+        linear-gradient(145deg, #fff8db, #e9f8ff 52%, #f8eaff);
+    }
 
-      color: #243047;
-      min-height: 100vh;
+    button,
+    select {
+      font-family: inherit;
     }
 
     .app {
-      width: min(1050px, 100%);
+      width: min(1080px, 100%);
       margin: auto;
-      padding: 20px;
+      padding: 18px;
     }
 
     .hero {
       text-align: center;
-      padding: 22px 10px 16px;
+      padding: 24px 10px 12px;
     }
 
-    .hero-icon {
-      font-size: 64px;
+    .hero-logo {
+      font-size: 60px;
+      line-height: 1;
+      margin-bottom: 8px;
     }
 
     h1 {
-      margin: 4px 0;
       font-size: 38px;
+      margin: 0;
+      letter-spacing: -1px;
     }
 
     .subtitle {
-      margin: 8px auto;
       color: #657085;
-      font-size: 18px;
-      max-width: 550px;
+      font-size: 17px;
+      max-width: 600px;
+      margin: 8px auto 0;
+      line-height: 1.45;
     }
 
-
-    /* TASKS */
+    .task-heading {
+      text-align: center;
+      margin: 24px 0 14px;
+      font-size: 27px;
+    }
 
     .tasks {
       display: grid;
-      grid-template-columns:
-        repeat(auto-fit, minmax(290px, 1fr));
-
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
       gap: 18px;
-      margin-top: 20px;
     }
 
     .task-card {
-      background: rgba(255,255,255,.93);
-      border-radius: 26px;
-      padding: 20px;
-
-      box-shadow:
-        0 8px 30px rgba(37,55,88,.10);
-
       position: relative;
       overflow: hidden;
-
-      transition:
-        transform .15s ease,
-        box-shadow .15s ease;
-    }
-
-    .task-card:active {
-      transform: scale(.985);
+      background: rgba(255,255,255,.94);
+      border-radius: 27px;
+      padding: 18px;
+      box-shadow: 0 10px 30px rgba(42,55,90,.10);
+      border: 1px solid rgba(255,255,255,.8);
     }
 
     .task-card::before {
       content: "";
+      height: 7px;
       position: absolute;
-      height: 8px;
+      top: 0;
       left: 0;
       right: 0;
-      top: 0;
+
       background:
         linear-gradient(
           90deg,
-          #ffca5c,
-          #7ed9ff,
-          #bc8cff,
-          #75e3a0
+          #ffd267,
+          #80defb,
+          #c395ff,
+          #80e5ac
         );
     }
 
-    .task-picture {
-      width: 90px;
-      height: 90px;
+    .task-image {
+      height: 135px;
+      width: 100%;
+      margin-top: 5px;
+      border-radius: 22px;
+      overflow: hidden;
 
-      margin: 6px auto 12px;
+      background:
+        linear-gradient(145deg, #fff8d9, #ebf9ff);
 
       display: flex;
       align-items: center;
       justify-content: center;
+    }
 
-      border-radius: 24px;
-
-      background:
-        linear-gradient(
-          145deg,
-          #fff3ba,
-          #e8f6ff
-        );
-
-      font-size: 58px;
-
-      box-shadow:
-        inset 0 0 0 2px rgba(255,255,255,.7);
+    .task-image svg {
+      width: 118px;
+      height: 118px;
     }
 
     .task-title {
-      text-align: center;
       font-size: 21px;
-      font-weight: 800;
-
-      min-height: 54px;
+      font-weight: 900;
+      text-align: center;
+      margin-top: 13px;
+      min-height: 52px;
 
       display: flex;
       align-items: center;
@@ -155,90 +141,71 @@
 
     .task-description {
       text-align: center;
-      color: #6d7586;
       font-size: 14px;
+      color: #748094;
       min-height: 20px;
-      margin-bottom: 8px;
+      margin-top: 2px;
     }
 
-    .money {
-      text-align: center;
-
+    .reward {
       display: block;
-
       width: max-content;
-      margin: 8px auto 16px;
+      margin: 10px auto 15px;
+      padding: 7px 15px;
 
       background: #dff7e8;
-      color: #167443;
+      color: #147144;
 
-      padding: 7px 14px;
       border-radius: 999px;
-
-      font-size: 22px;
       font-weight: 900;
+      font-size: 21px;
     }
 
-    select {
+    .child-select {
       width: 100%;
-
-      padding: 14px;
-
-      border-radius: 14px;
-      border: 2px solid #dfe5ef;
-
-      background: white;
-
       font-size: 17px;
-      color: #29344a;
-
+      padding: 14px;
+      border-radius: 14px;
+      border: 2px solid #dde4ee;
+      background: white;
       margin-bottom: 10px;
+      color: #29344a;
     }
 
     .complete-button {
       width: 100%;
-
-      border: 0;
-      border-radius: 15px;
-
       padding: 15px;
 
+      border: none;
+      border-radius: 15px;
+
       background:
-        linear-gradient(
-          135deg,
-          #586cff,
-          #8c62ef
-        );
+        linear-gradient(135deg, #536eff, #9568ef);
 
       color: white;
+      font-size: 16px;
+      font-weight: 900;
 
-      font-weight: 850;
-      font-size: 17px;
-
+      box-shadow: 0 6px 15px rgba(92,88,216,.23);
       cursor: pointer;
-
-      box-shadow:
-        0 5px 14px rgba(92,88,216,.25);
     }
 
     .complete-button:active {
-      transform: scale(.98);
+      transform: scale(.985);
     }
 
+    .complete-button:disabled {
+      opacity: .45;
+      cursor: default;
+    }
 
-    /* BALANCES */
-
-    .balance-section {
-      margin-top: 32px;
-
+    .balance-section,
+    .history-section {
       background: rgba(255,255,255,.94);
-
       border-radius: 28px;
-
-      padding: 24px;
-
-      box-shadow:
-        0 10px 35px rgba(37,55,88,.10);
+      padding: 23px;
+      margin-top: 28px;
+      box-shadow: 0 10px 35px rgba(37,55,88,.10);
     }
 
     .section-title {
@@ -249,204 +216,179 @@
 
     .balances {
       display: grid;
-
-      grid-template-columns:
-        repeat(4, 1fr);
-
+      grid-template-columns: repeat(4, 1fr);
       gap: 12px;
     }
 
-    .balance {
-      border-radius: 20px;
+    .balance-card {
+      border: none;
+      cursor: pointer;
+      border-radius: 21px;
       padding: 18px 8px;
-
       text-align: center;
 
       background:
-        linear-gradient(
-          145deg,
-          #f7fbff,
-          #fff
-        );
+        linear-gradient(145deg, #f7fbff, #fff);
 
-      border: 2px solid #edf1f7;
+      box-shadow: inset 0 0 0 2px #edf1f7;
+
+      color: #29344a;
+    }
+
+    .balance-card:active {
+      transform: scale(.98);
     }
 
     .avatar {
-      font-size: 34px;
+      font-size: 36px;
     }
 
     .child-name {
-      font-weight: 800;
-      margin-top: 5px;
+      font-weight: 900;
+      margin-top: 4px;
+      font-size: 17px;
     }
 
     .balance-money {
-      font-size: 27px;
-      font-weight: 900;
-      margin-top: 6px;
-      color: #17754b;
+      color: #157448;
+      font-size: 28px;
+      font-weight: 950;
+      margin-top: 5px;
     }
 
-
-    /* HISTORY */
-
-    .history-section {
-      margin-top: 24px;
-
-      background: white;
-
-      border-radius: 25px;
-
-      padding: 20px;
-
-      box-shadow:
-        0 8px 25px rgba(37,55,88,.08);
+    .account-hint {
+      text-align: center;
+      color: #8790a0;
+      font-size: 13px;
+      margin-top: 12px;
     }
 
     .history {
       display: flex;
       flex-direction: column;
-      gap: 9px;
+      gap: 4px;
     }
 
     .history-item {
       display: grid;
-
-      grid-template-columns:
-        1fr auto;
-
+      grid-template-columns: 1fr auto;
       gap: 10px;
-
-      padding: 12px 10px;
-
+      padding: 12px 8px;
       border-bottom: 1px solid #edf0f4;
     }
 
     .history-main {
-      font-weight: 700;
+      font-weight: 750;
     }
 
     .history-time {
       display: block;
-      color: #8891a1;
-      font-size: 12px;
       margin-top: 3px;
+      color: #8a93a3;
+      font-size: 12px;
     }
 
     .history-money {
-      color: #17754b;
       font-weight: 900;
+      color: #157448;
+    }
+
+    .history-money.minus {
+      color: #c34853;
     }
 
     .empty-history {
-      color: #8a93a3;
+      padding: 18px;
       text-align: center;
-      padding: 15px;
+      color: #8993a4;
     }
 
-
-    /* PARENTS */
-
     .parent-section {
-      margin-top: 25px;
-      margin-bottom: 30px;
+      margin: 25px 0 35px;
+      padding: 21px;
 
       background: #29344a;
-
       color: white;
 
       border-radius: 25px;
-
-      padding: 20px;
     }
 
     .parent-section h2 {
-      margin-top: 0;
+      margin: 0 0 6px;
     }
 
     .parent-note {
-      color: #ccd2dd;
+      color: #cdd3de;
       font-size: 14px;
+      line-height: 1.45;
     }
 
     .parent-button {
-      border: 0;
-
+      border: none;
       border-radius: 14px;
-
       padding: 13px 17px;
 
-      font-size: 16px;
-      font-weight: 800;
-
-      background: #ffcf69;
+      background: #ffd26f;
       color: #29344a;
 
+      font-weight: 900;
+      font-size: 16px;
       cursor: pointer;
     }
-
-
-    /* MODALS */
 
     .overlay {
       position: fixed;
       inset: 0;
-
-      background: rgba(29,36,52,.50);
+      z-index: 6000;
 
       display: none;
-
       align-items: center;
       justify-content: center;
 
-      z-index: 5000;
-
       padding: 20px;
+      background: rgba(27,35,53,.55);
     }
 
     .modal {
+      width: min(410px, 100%);
+      max-height: 90vh;
+      overflow-y: auto;
+
+      padding: 27px;
+      border-radius: 28px;
+
       background: white;
       color: #29344a;
 
-      width: min(390px,100%);
-
-      border-radius: 28px;
-
-      padding: 27px;
-
       text-align: center;
 
-      box-shadow:
-        0 20px 60px rgba(0,0,0,.25);
+      box-shadow: 0 20px 70px rgba(0,0,0,.28);
     }
 
     .modal-icon {
-      font-size: 60px;
+      font-size: 62px;
     }
 
     .modal h2 {
-      font-size: 27px;
       margin: 8px 0;
+      font-size: 27px;
     }
 
     .modal p {
-      color: #697386;
+      color: #6c7688;
     }
 
-    .modal input,
-    .modal select {
+    .modal select,
+    .modal input {
       width: 100%;
-
       padding: 14px;
+      margin: 5px 0 10px;
 
+      border: 2px solid #dde4ee;
       border-radius: 14px;
 
-      border: 2px solid #dfe5ef;
-
-      font-size: 18px;
-
-      margin: 5px 0 10px;
+      background: white;
+      font-size: 17px;
     }
 
     .modal input {
@@ -457,18 +399,15 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 9px;
-      margin-top: 10px;
+      margin-top: 12px;
     }
 
     .modal-button {
-      border: 0;
-      border-radius: 14px;
-
       padding: 13px;
-
+      border: none;
+      border-radius: 14px;
       font-size: 16px;
-      font-weight: 800;
-
+      font-weight: 900;
       cursor: pointer;
     }
 
@@ -478,48 +417,53 @@
     }
 
     .confirm {
-      background: #5268ef;
+      background: #536cef;
       color: white;
     }
 
     .danger {
-      background: #e8505b;
+      background: #df4f5a;
       color: white;
     }
 
     .error {
       color: #c52d3a;
-      font-weight: 700;
+      font-weight: 800;
       min-height: 20px;
     }
 
+    .account-total {
+      font-size: 40px;
+      color: #157448;
+      font-weight: 950;
+      margin: 5px 0 17px;
+    }
 
-    /* SUCCESS */
+    .account-history {
+      text-align: left;
+      margin-top: 12px;
+    }
+
+    .account-history-title {
+      font-weight: 900;
+      margin-bottom: 7px;
+    }
 
     .success {
       position: fixed;
-
-      top: 50%;
       left: 50%;
-
-      transform:
-        translate(-50%, -50%)
-        scale(.8);
-
+      top: 50%;
       z-index: 10000;
 
+      transform: translate(-50%, -50%) scale(.82);
+
       background: white;
-
-      min-width: 280px;
-
-      text-align: center;
-
+      min-width: 285px;
       padding: 30px;
-
+      text-align: center;
       border-radius: 28px;
 
-      box-shadow:
-        0 18px 60px rgba(0,0,0,.26);
+      box-shadow: 0 20px 70px rgba(0,0,0,.28);
 
       animation: pop .35s ease forwards;
     }
@@ -530,82 +474,68 @@
 
     @keyframes pop {
       to {
-        transform:
-          translate(-50%, -50%)
-          scale(1);
+        transform: translate(-50%, -50%) scale(1);
       }
     }
-
 
     .confetti {
       position: fixed;
       top: -30px;
-
-      pointer-events: none;
-
       z-index: 9999;
-
+      pointer-events: none;
       animation: fall linear forwards;
     }
 
     @keyframes fall {
       to {
-        transform:
-          translateY(110vh)
-          rotate(720deg);
-
+        transform: translateY(110vh) rotate(720deg);
         opacity: .8;
       }
     }
 
-
     @media(max-width: 700px) {
-
       .app {
-        padding: 12px;
+        padding: 11px;
       }
 
       h1 {
         font-size: 30px;
       }
 
-      .balances {
-        grid-template-columns:
-          1fr 1fr;
-      }
-
       .tasks {
-        grid-template-columns:
-          1fr;
+        grid-template-columns: 1fr;
       }
 
-    }
+      .balances {
+        grid-template-columns: 1fr 1fr;
+      }
 
+      .task-image {
+        height: 125px;
+      }
+    }
   </style>
 </head>
+
 
 <body>
 
 <div class="app">
 
-  <div class="hero">
-
-    <div class="hero-icon">
-      💰✨
-    </div>
-
-    <h1>
-      VangkildeLommepenge
-    </h1>
+  <header class="hero">
+    <div class="hero-logo">💰✨</div>
+    <h1>VangkildeLommepenge</h1>
 
     <div class="subtitle">
-      Hjælp til derhjemme, tjen lommepenge
-      og se din opsparing vokse!
-      🚀
+      Hjælp til derhjemme, tjen dine egne penge
+      og se opsparingen vokse 🚀
     </div>
+  </header>
 
-  </div>
 
+  <h2 class="task-heading">
+    🎯 Vælg en mission
+  </h2>
 
   <div class="tasks" id="tasks"></div>
 
@@ -618,45 +548,42 @@
 
     <div class="balances">
 
-      <div class="balance">
+      <button class="balance-card"
+              onclick="openAccount('Vester')">
         <div class="avatar">🚴</div>
         <div class="child-name">Vester</div>
         <div id="balance-Vester"
-             class="balance-money">
-          0 kr.
-        </div>
-      </div>
+             class="balance-money">0 kr.</div>
+      </button>
 
-
-      <div class="balance">
+      <button class="balance-card"
+              onclick="openAccount('Bertil')">
         <div class="avatar">⚽</div>
         <div class="child-name">Bertil</div>
         <div id="balance-Bertil"
-             class="balance-money">
-          0 kr.
-        </div>
-      </div>
+             class="balance-money">0 kr.</div>
+      </button>
 
-
-      <div class="balance">
+      <button class="balance-card"
+              onclick="openAccount('Arthur')">
         <div class="avatar">🚴</div>
         <div class="child-name">Arthur</div>
         <div id="balance-Arthur"
-             class="balance-money">
-          0 kr.
-        </div>
-      </div>
+             class="balance-money">0 kr.</div>
+      </button>
 
-
-      <div class="balance">
+      <button class="balance-card"
+              onclick="openAccount('Leonora')">
         <div class="avatar">⭐</div>
         <div class="child-name">Leonora</div>
         <div id="balance-Leonora"
-             class="balance-money">
-          0 kr.
-        </div>
-      </div>
+             class="balance-money">0 kr.</div>
+      </button>
 
+    </div>
+
+    <div class="account-hint">
+      Tryk på dit navn for at se din konto
     </div>
 
   </section>
@@ -669,29 +596,23 @@
     </h2>
 
     <div id="history"
-         class="history">
-    </div>
+         class="history"></div>
 
   </section>
 
 
   <section class="parent-section">
 
-    <h2>
-      🔐 Forældre
-    </h2>
+    <h2>🔐 Forældre</h2>
 
     <p class="parent-note">
-      Når lommepengene er overført til barnets
-      bankkonto, kan saldoen nulstilles her.
+      Når pengene er overført til barnets bankkonto,
+      kan saldoen nulstilles her.
     </p>
 
-    <button
-      class="parent-button"
-      onclick="openReset()">
-
+    <button class="parent-button"
+            onclick="openReset()">
       💳 Udbetal / nulstil konto
-
     </button>
 
   </section>
@@ -699,6 +620,90 @@
 </div>
 
 
+<!-- OPGAVE-BEKRÆFTELSE -->
+
+<div id="confirmOverlay"
+     class="overlay">
+
+  <div class="modal">
+
+    <div class="modal-icon"
+         id="confirmIcon">
+      ✅
+    </div>
+
+    <h2 id="confirmTitle">
+      Opgave færdig?
+    </h2>
+
+    <p id="confirmText"></p>
+
+    <div class="modal-actions">
+
+      <button class="modal-button cancel"
+              onclick="closeConfirm()">
+        Nej
+      </button>
+
+      <button class="modal-button confirm"
+              onclick="confirmTask()">
+        Ja, færdig! 🎉
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- KONTO -->
+
+<div id="accountOverlay"
+     class="overlay">
+
+  <div class="modal">
+
+    <div class="modal-icon"
+         id="accountIcon">
+      💰
+    </div>
+
+    <h2 id="accountName"></h2>
+
+    <div class="account-total"
+         id="accountTotal">
+      0 kr.
+    </div>
+
+    <div class="account-history">
+
+      <div class="account-history-title">
+        Seneste indtjening
+      </div>
+
+      <div id="accountHistory"
+           class="history">
+      </div>
+
+    </div>
+
+    <div style="margin-top:18px;">
+
+      <button class="modal-button confirm"
+              style="width:100%;"
+              onclick="closeAccount()">
+        Luk
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- FORÆLDRE -->
 
 <div id="resetOverlay"
      class="overlay">
@@ -718,46 +723,33 @@
     </p>
 
     <select id="resetChild">
-
-      <option value="">
-        Vælg barn
-      </option>
-
+      <option value="">Vælg barn</option>
       <option>Vester</option>
       <option>Bertil</option>
       <option>Arthur</option>
       <option>Leonora</option>
-
     </select>
 
-    <input
-      id="resetPin"
-      type="password"
-      inputmode="numeric"
-      maxlength="4"
-      placeholder="Kode">
+    <input id="resetPin"
+           type="password"
+           inputmode="numeric"
+           maxlength="4"
+           placeholder="Kode">
 
     <div id="resetError"
          class="error">
     </div>
 
-
     <div class="modal-actions">
 
-      <button
-        class="modal-button cancel"
-        onclick="closeReset()">
-
+      <button class="modal-button cancel"
+              onclick="closeReset()">
         Annuller
-
       </button>
 
-      <button
-        class="modal-button danger"
-        onclick="resetAccount()">
-
-        Nulstil
-
+      <button class="modal-button danger"
+              onclick="resetAccount()">
+        Udbetal
       </button>
 
     </div>
@@ -765,7 +757,6 @@
   </div>
 
 </div>
-
 
 
 <script>
@@ -779,9 +770,160 @@ const children =
 ];
 
 
+const illustrations =
+{
+
+dishwasher: `
+<svg viewBox="0 0 120 120">
+  <rect x="25" y="12" width="70" height="96" rx="12"
+        fill="#d9eef8"/>
+  <rect x="31" y="19" width="58" height="19" rx="7"
+        fill="#91cfe8"/>
+  <circle cx="42" cy="28" r="4" fill="#526779"/>
+  <rect x="31" y="44" width="58" height="56" rx="8"
+        fill="#ffffff"/>
+  <path d="M39 82 Q60 51 81 82"
+        fill="none"
+        stroke="#56a5d2"
+        stroke-width="6"
+        stroke-linecap="round"/>
+  <circle cx="48" cy="72" r="9"
+          fill="#ffd96b"/>
+  <circle cx="71" cy="72" r="9"
+          fill="#aee39a"/>
+</svg>
+`,
+
+trash: `
+<svg viewBox="0 0 120 120">
+  <path d="M37 37 L43 103 H78 L84 37 Z"
+        fill="#77c49a"/>
+  <rect x="32" y="30" width="57" height="10" rx="5"
+        fill="#397860"/>
+  <rect x="48" y="22" width="25" height="9" rx="4"
+        fill="#397860"/>
+  <path d="M53 52 L55 88"
+        stroke="#fff"
+        stroke-width="5"
+        stroke-linecap="round"/>
+  <path d="M68 52 L66 88"
+        stroke="#fff"
+        stroke-width="5"
+        stroke-linecap="round"/>
+  <circle cx="31" cy="88" r="10" fill="#697382"/>
+  <path d="M25 79 Q31 72 37 79"
+        fill="#505a68"/>
+</svg>
+`,
+
+dog: `
+<svg viewBox="0 0 120 120">
+  <ellipse cx="60" cy="67" rx="35" ry="28"
+           fill="#c78b54"/>
+  <circle cx="60" cy="48" r="27"
+          fill="#d69a61"/>
+  <path d="M38 33 Q21 30 29 57"
+        fill="#8a5939"/>
+  <path d="M82 33 Q99 30 91 57"
+        fill="#8a5939"/>
+  <circle cx="51" cy="47" r="4"
+          fill="#292929"/>
+  <circle cx="69" cy="47" r="4"
+          fill="#292929"/>
+  <ellipse cx="60" cy="59" rx="7" ry="5"
+           fill="#302a28"/>
+  <path d="M55 66 Q60 71 65 66"
+        fill="none"
+        stroke="#50382b"
+        stroke-width="3"
+        stroke-linecap="round"/>
+  <path d="M24 92 Q60 70 95 94"
+        fill="none"
+        stroke="#6475df"
+        stroke-width="5"
+        stroke-linecap="round"/>
+</svg>
+`,
+
+bed: `
+<svg viewBox="0 0 120 120">
+  <rect x="18" y="56" width="84" height="33" rx="9"
+        fill="#78bcea"/>
+  <rect x="23" y="48" width="34" height="17" rx="8"
+        fill="#ffffff"/>
+  <path d="M57 56 H96 Q102 56 102 63 V89 H57 Z"
+        fill="#a493ed"/>
+  <rect x="18" y="86" width="6" height="18" rx="3"
+        fill="#566476"/>
+  <rect x="96" y="86" width="6" height="18" rx="3"
+        fill="#566476"/>
+  <path d="M63 63 Q78 72 96 63"
+        fill="none"
+        stroke="#d8ceff"
+        stroke-width="5"/>
+</svg>
+`,
+
+dishes: `
+<svg viewBox="0 0 120 120">
+  <ellipse cx="58" cy="84" rx="37" ry="13"
+           fill="#9cd8ed"/>
+  <ellipse cx="58" cy="80" rx="29" ry="9"
+           fill="#ffffff"/>
+  <path d="M35 66 H82"
+        stroke="#7896a8"
+        stroke-width="6"
+        stroke-linecap="round"/>
+  <rect x="75" y="28" width="20" height="43" rx="5"
+        fill="#bcecff"/>
+  <rect x="79" y="33" width="12" height="30" rx="3"
+        fill="#eafaff"/>
+  <path d="M29 35 L38 70"
+        stroke="#7bc4a6"
+        stroke-width="8"
+        stroke-linecap="round"/>
+  <circle cx="28" cy="31" r="8"
+          fill="#71aee5"/>
+</svg>
+`,
+
+book: `
+<svg viewBox="0 0 120 120">
+  <path d="M17 30 Q40 22 58 37 V96
+           Q40 80 17 88 Z"
+        fill="#ffcb65"/>
+  <path d="M103 30 Q80 22 62 37 V96
+           Q80 80 103 88 Z"
+        fill="#8dc8f4"/>
+  <path d="M60 37 V96"
+        stroke="#fff"
+        stroke-width="5"/>
+  <path d="M29 47 H48"
+        stroke="#fff"
+        stroke-width="4"
+        stroke-linecap="round"/>
+  <path d="M29 58 H48"
+        stroke="#fff"
+        stroke-width="4"
+        stroke-linecap="round"/>
+  <path d="M72 47 H91"
+        stroke="#fff"
+        stroke-width="4"
+        stroke-linecap="round"/>
+  <path d="M72 58 H91"
+        stroke="#fff"
+        stroke-width="4"
+        stroke-linecap="round"/>
+</svg>
+`
+
+};
+
+
 const tasks =
 [
   {
+    image: illustrations.dishwasher,
     icon: "🍽️",
     name: "Tøm opvaskemaskinen",
     description: "",
@@ -789,6 +931,7 @@ const tasks =
   },
 
   {
+    image: illustrations.trash,
     icon: "🗑️",
     name: "Gå ud med skrald",
     description: "",
@@ -796,14 +939,15 @@ const tasks =
   },
 
   {
+    image: illustrations.dog,
     icon: "🐕",
     name: "Gåtur med Herman",
-    description:
-      "Minimum 1 km / cirka 10 minutter",
+    description: "Minimum 1 km / cirka 10 minutter",
     value: 10
   },
 
   {
+    image: illustrations.bed,
     icon: "🛏️",
     name: "Red din seng",
     description: "",
@@ -811,14 +955,15 @@ const tasks =
   },
 
   {
+    image: illustrations.dishes,
     icon: "🥛",
-    name:
-      "Tag glas, flasker og opvask ned fra værelset",
+    name: "Tag glas, flasker og opvask ned fra værelset",
     description: "",
     value: 2
   },
 
   {
+    image: illustrations.book,
     icon: "📖",
     name: "Læs 10 minutter i en bog",
     description: "",
@@ -857,7 +1002,33 @@ function loadData()
 
   try
   {
-    return JSON.parse(saved);
+    const parsed =
+      JSON.parse(saved);
+
+    children.forEach(
+      child =>
+      {
+        if (
+          typeof parsed.balances?.[child]
+          !== "number"
+        )
+        {
+          if (!parsed.balances)
+          {
+            parsed.balances = {};
+          }
+
+          parsed.balances[child] = 0;
+        }
+      }
+    );
+
+    if (!Array.isArray(parsed.history))
+    {
+      parsed.history = [];
+    }
+
+    return parsed;
   }
   catch
   {
@@ -868,6 +1039,14 @@ function loadData()
 
 let data =
   loadData();
+
+
+let pendingTask =
+  null;
+
+
+let recentClaims =
+  {};
 
 
 function saveData()
@@ -911,9 +1090,8 @@ function buildTasks()
 
       card.innerHTML =
       `
-
-        <div class="task-picture">
-          ${task.icon}
+        <div class="task-image">
+          ${task.image}
         </div>
 
         <div class="task-title">
@@ -924,12 +1102,13 @@ function buildTasks()
           ${task.description}
         </div>
 
-        <div class="money">
+        <div class="reward">
           +${task.value} kr.
         </div>
 
-
-        <select id="task-child-${index}">
+        <select
+          class="child-select"
+          id="task-child-${index}">
 
           <option value="">
             👤 Hvem har gjort det?
@@ -939,25 +1118,23 @@ function buildTasks()
 
         </select>
 
-
         <button
           class="complete-button"
-          onclick="completeTask(${index})">
+          id="complete-${index}"
+          onclick="prepareTask(${index})">
 
           ✅ OPGAVE FULDFØRT
 
         </button>
-
       `;
 
       area.appendChild(card);
-
     }
   );
 }
 
 
-function completeTask(index)
+function prepareTask(index)
 {
   const selector =
     document.getElementById(
@@ -982,29 +1159,142 @@ function completeTask(index)
     tasks[index];
 
 
+  pendingTask =
+  {
+    index,
+    child
+  };
+
+
+  document.getElementById(
+    "confirmIcon"
+  ).textContent =
+    task.icon;
+
+
+  document.getElementById(
+    "confirmTitle"
+  ).textContent =
+    child + " – er opgaven færdig?";
+
+
+  document.getElementById(
+    "confirmText"
+  ).innerHTML =
+    `
+    <strong>${task.name}</strong><br><br>
+    Hvis du trykker ja, får ${child}
+    <strong>${task.value} kr.</strong>
+    `;
+
+
+  document.getElementById(
+    "confirmOverlay"
+  ).style.display =
+    "flex";
+}
+
+
+function closeConfirm()
+{
+  pendingTask =
+    null;
+
+  document.getElementById(
+    "confirmOverlay"
+  ).style.display =
+    "none";
+}
+
+
+function confirmTask()
+{
+  if (!pendingTask)
+  {
+    return;
+  }
+
+
+  const {
+    index,
+    child
+  } =
+    pendingTask;
+
+
+  const task =
+    tasks[index];
+
+
+  const claimKey =
+    child + "_" + index;
+
+
+  const now =
+    Date.now();
+
+
+  /*
+    Samme barn kan ikke registrere
+    præcis samme opgave igen indenfor
+    30 sekunder.
+
+    Det beskytter mod dobbelttryk,
+    men forhindrer ikke at en opgave
+    udføres igen senere.
+  */
+
+  if (
+    recentClaims[claimKey]
+    &&
+    now - recentClaims[claimKey]
+      < 30000
+  )
+  {
+    closeConfirm();
+
+    alert(
+      "Den opgave er lige blevet registreret 😊"
+    );
+
+    return;
+  }
+
+
+  recentClaims[claimKey] =
+    now;
+
+
   data.balances[child] +=
     task.value;
 
 
   data.history.unshift(
     {
-      child: child,
+      child,
       task: task.name,
       value: task.value,
-      time: Date.now()
+      time: now
     }
   );
 
 
   data.history =
-    data.history.slice(0,50);
+    data.history.slice(0,100);
 
 
   saveData();
 
   updateScreen();
 
-  selector.value = "";
+
+  document.getElementById(
+    "task-child-" + index
+  ).value =
+    "";
+
+
+  closeConfirm();
 
   showSuccess(
     child,
@@ -1018,13 +1308,11 @@ function updateScreen()
   children.forEach(
     child =>
     {
-
       document.getElementById(
         "balance-" + child
       ).textContent =
         data.balances[child]
         + " kr.";
-
     }
   );
 
@@ -1041,13 +1329,15 @@ function buildHistory()
     );
 
 
-  if (data.history.length === 0)
+  if (
+    data.history.length === 0
+  )
   {
     area.innerHTML =
       `
       <div class="empty-history">
         Ingen opgaver endnu.
-        Kom i gang! 🚀
+        Vælg en mission ovenfor 🚀
       </div>
       `;
 
@@ -1059,56 +1349,148 @@ function buildHistory()
     data.history
     .slice(0,12)
     .map(
-      item =>
-      {
-
-        const date =
-          new Date(
-            item.time
-          );
-
-
-        const time =
-          date.toLocaleString(
-            "da-DK",
-            {
-              day: "2-digit",
-              month: "2-digit",
-              hour: "2-digit",
-              minute: "2-digit"
-            }
-          );
-
-
-        return `
-          <div class="history-item">
-
-            <div>
-
-              <div class="history-main">
-
-                ${item.child}
-                ·
-                ${item.task}
-
-              </div>
-
-              <span class="history-time">
-                ${time}
-              </span>
-
-            </div>
-
-            <div class="history-money">
-              +${item.value} kr.
-            </div>
-
-          </div>
-        `;
-
-      }
+      historyRow
     )
     .join("");
+}
+
+
+function historyRow(item)
+{
+  const date =
+    new Date(
+      item.time
+    );
+
+
+  const time =
+    date.toLocaleString(
+      "da-DK",
+      {
+        day: "2-digit",
+        month: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit"
+      }
+    );
+
+
+  const minus =
+    item.value < 0;
+
+
+  const money =
+    item.value > 0
+      ? "+" + item.value
+      : item.value;
+
+
+  return `
+    <div class="history-item">
+
+      <div>
+
+        <div class="history-main">
+          ${item.child}
+          ·
+          ${item.task}
+        </div>
+
+        <span class="history-time">
+          ${time}
+        </span>
+
+      </div>
+
+      <div class="history-money ${minus ? "minus" : ""}">
+        ${money} kr.
+      </div>
+
+    </div>
+  `;
+}
+
+
+function openAccount(child)
+{
+  const icons =
+  {
+    Vester: "🚴",
+    Bertil: "⚽",
+    Arthur: "🚴",
+    Leonora: "⭐"
+  };
+
+
+  document.getElementById(
+    "accountIcon"
+  ).textContent =
+    icons[child];
+
+
+  document.getElementById(
+    "accountName"
+  ).textContent =
+    child + "s konto";
+
+
+  document.getElementById(
+    "accountTotal"
+  ).textContent =
+    data.balances[child]
+    + " kr.";
+
+
+  const childHistory =
+    data.history
+    .filter(
+      item =>
+        item.child === child
+    )
+    .slice(0,10);
+
+
+  const area =
+    document.getElementById(
+      "accountHistory"
+    );
+
+
+  if (
+    childHistory.length === 0
+  )
+  {
+    area.innerHTML =
+      `
+      <div class="empty-history">
+        Ingen opgaver endnu.
+      </div>
+      `;
+  }
+  else
+  {
+    area.innerHTML =
+      childHistory
+      .map(
+        historyRow
+      )
+      .join("");
+  }
+
+
+  document.getElementById(
+    "accountOverlay"
+  ).style.display =
+    "flex";
+}
+
+
+function closeAccount()
+{
+  document.getElementById(
+    "accountOverlay"
+  ).style.display =
+    "none";
 }
 
 
@@ -1132,7 +1514,6 @@ function showSuccess(
 
   box.innerHTML =
   `
-
     <div class="success-big">
       🎉💰
     </div>
@@ -1146,10 +1527,16 @@ function showSuccess(
       ${task.name}
     </p>
 
-    <h2 style="color:#17754b;">
+    <h2 style="color:#157448;">
       +${task.value} kr.
     </h2>
 
+    <p>
+      Du har nu
+      <strong>
+        ${data.balances[child]} kr.
+      </strong>
+    </p>
   `;
 
 
@@ -1163,8 +1550,7 @@ function showSuccess(
     {
       box.remove();
     },
-
-    2200
+    2500
   );
 }
 
@@ -1183,11 +1569,10 @@ function launchConfetti()
 
   for (
     let i = 0;
-    i < 45;
+    i < 50;
     i++
   )
   {
-
     const piece =
       document.createElement(
         "div"
@@ -1244,10 +1629,8 @@ function launchConfetti()
       {
         piece.remove();
       },
-
       5000
     );
-
   }
 }
 
@@ -1337,7 +1720,7 @@ function resetAccount()
 
   const okay =
     confirm(
-      "Udbetal "
+      "Har du overført "
       +
       amount
       +
@@ -1345,7 +1728,7 @@ function resetAccount()
       +
       child
       +
-      " og nulstil saldoen?"
+      "s bankkonto?"
     );
 
 
@@ -1357,7 +1740,7 @@ function resetAccount()
 
   data.history.unshift(
     {
-      child: child,
+      child,
       task:
         "💳 Udbetalt til bankkonto",
       value:
