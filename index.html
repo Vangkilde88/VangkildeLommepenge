@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="da">
 <head>
@@ -11,6 +12,9 @@
   <meta name="apple-mobile-web-app-title" content="VangkildeLommepenge">
 
   <meta name="theme-color" content="#fff7d6">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.json">
 
   <title>VangkildeLommepenge</title>
 
@@ -975,441 +979,395 @@ const tasks =
 function emptyData()
 {
   return {
-    balances:
-    {
+    balances: {
       Vester: 0,
       Bertil: 0,
       Arthur: 0,
       Leonora: 0
     },
-
     history: []
   };
 }
 
+let data = emptyData();
+let pendingTask = null;
+let recentClaims = {};
+let firebaseReady = false;
 
-function loadData()
+const firebaseConfig = {
+  apiKey: "AIzaSyAmhOxG77FVLSaGghP2uQAlnkc3a5tWVfc",
+  authDomain: "vangkildelommepenge.firebaseapp.com",
+  projectId: "vangkildelommepenge",
+  storageBucket: "vangkildelommepenge.firebasestorage.app",
+  messagingSenderId: "176791827841",
+  appId: "1:176791827841:web:5173c142f5858331fb2480"
+};
+
+let db;
+let stateRef;
+let firebaseFns = {};
+
+async function startFirebase()
 {
-  const saved =
-    localStorage.getItem(
-      "vangkildeLommepenge"
-    );
-
-  if (!saved)
-  {
-    return emptyData();
-  }
-
   try
   {
-    const parsed =
-      JSON.parse(saved);
+    const [
+      appModule,
+      authModule,
+      firestoreModule
+    ] = await Promise.all([
+      import("https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js"),
+      import("https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js"),
+      import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js")
+    ]);
 
-    children.forEach(
-      child =>
+    const app = appModule.initializeApp(firebaseConfig);
+    const auth = authModule.getAuth(app);
+    db = firestoreModule.getFirestore(app);
+
+    firebaseFns = {
+      doc: firestoreModule.doc,
+      collection: firestoreModule.collection,
+      query: firestoreModule.query,
+      orderBy: firestoreModule.orderBy,
+      limit: firestoreModule.limit,
+      onSnapshot: firestoreModule.onSnapshot,
+      runTransaction: firestoreModule.runTransaction,
+      serverTimestamp: firestoreModule.serverTimestamp
+    };
+
+    await authModule.signInAnonymously(auth);
+
+    stateRef = firebaseFns.doc(db, "app", "state");
+
+    // Opretter fælles saldo-dokument første gang appen bruges.
+    await firebaseFns.runTransaction(db, async transaction =>
+    {
+      const snap = await transaction.get(stateRef);
+
+      if (!snap.exists())
       {
-        if (
-          typeof parsed.balances?.[child]
-          !== "number"
-        )
-        {
-          if (!parsed.balances)
-          {
-            parsed.balances = {};
+        transaction.set(stateRef, {
+          balances: {
+            Vester: 0,
+            Bertil: 0,
+            Arthur: 0,
+            Leonora: 0
           }
-
-          parsed.balances[child] = 0;
-        }
+        });
       }
+    });
+
+    firebaseReady = true;
+
+    // Live-opdatering af saldi på alle iPads.
+    firebaseFns.onSnapshot(
+      stateRef,
+      snap =>
+      {
+        if (!snap.exists()) return;
+
+        const remote = snap.data();
+        children.forEach(child =>
+        {
+          const value = remote.balances?.[child];
+          data.balances[child] =
+            typeof value === "number" ? value : 0;
+        });
+
+        updateScreen();
+      },
+      showFirebaseError
     );
 
-    if (!Array.isArray(parsed.history))
-    {
-      parsed.history = [];
-    }
+    // Live-opdatering af de seneste 100 posteringer.
+    const historyQuery = firebaseFns.query(
+      firebaseFns.collection(db, "history"),
+      firebaseFns.orderBy("createdAt", "desc"),
+      firebaseFns.limit(100)
+    );
 
-    return parsed;
+    firebaseFns.onSnapshot(
+      historyQuery,
+      snapshot =>
+      {
+        data.history = snapshot.docs.map(docSnap =>
+        {
+          const item = docSnap.data();
+
+          return {
+            child: item.child,
+            task: item.task,
+            value: item.value,
+            time:
+              item.createdAt?.toMillis?.()
+              ?? item.time
+              ?? Date.now()
+          };
+        });
+
+        updateScreen();
+      },
+      showFirebaseError
+    );
   }
-  catch
+  catch (error)
   {
-    return emptyData();
+    showFirebaseError(error);
   }
 }
 
-
-let data =
-  loadData();
-
-
-let pendingTask =
-  null;
-
-
-let recentClaims =
-  {};
-
-
-function saveData()
+function showFirebaseError(error)
 {
-  localStorage.setItem(
-    "vangkildeLommepenge",
-    JSON.stringify(data)
-  );
-}
+  console.error("Firebase-fejl:", error);
 
+  if (!document.getElementById("firebaseError"))
+  {
+    const box = document.createElement("div");
+    box.id = "firebaseError";
+    box.style.cssText =
+      "position:fixed;left:12px;right:12px;bottom:12px;z-index:20000;" +
+      "background:#fff0f0;color:#a32632;border:2px solid #e7a0a6;" +
+      "border-radius:16px;padding:12px;text-align:center;font-weight:800;";
+    box.textContent =
+      "Kunne ikke forbinde til den fælles lommepengekonto. Tjek internetforbindelsen og prøv igen.";
+    document.body.appendChild(box);
+  }
+}
 
 function buildTasks()
 {
-  const area =
-    document.getElementById("tasks");
-
+  const area = document.getElementById("tasks");
   area.innerHTML = "";
 
+  tasks.forEach((task,index) =>
+  {
+    const card = document.createElement("div");
+    card.className = "task-card";
 
-  tasks.forEach(
-    (task,index) =>
-    {
+    const options = children
+      .map(child =>
+        `<option value="${child}">${child}</option>`
+      )
+      .join("");
 
-      const card =
-        document.createElement("div");
+    card.innerHTML =
+    `
+      <div class="task-image">${task.image}</div>
+      <div class="task-title">${task.name}</div>
+      <div class="task-description">${task.description}</div>
+      <div class="reward">+${task.value} kr.</div>
 
-      card.className =
-        "task-card";
+      <select class="child-select" id="task-child-${index}">
+        <option value="">👤 Hvem har gjort det?</option>
+        ${options}
+      </select>
 
+      <button
+        class="complete-button"
+        id="complete-${index}"
+        onclick="prepareTask(${index})">
+        ✅ OPGAVE FULDFØRT
+      </button>
+    `;
 
-      const options =
-        children
-        .map(
-          child =>
-          `<option value="${child}">
-            ${child}
-          </option>`
-        )
-        .join("");
-
-
-      card.innerHTML =
-      `
-        <div class="task-image">
-          ${task.image}
-        </div>
-
-        <div class="task-title">
-          ${task.name}
-        </div>
-
-        <div class="task-description">
-          ${task.description}
-        </div>
-
-        <div class="reward">
-          +${task.value} kr.
-        </div>
-
-        <select
-          class="child-select"
-          id="task-child-${index}">
-
-          <option value="">
-            👤 Hvem har gjort det?
-          </option>
-
-          ${options}
-
-        </select>
-
-        <button
-          class="complete-button"
-          id="complete-${index}"
-          onclick="prepareTask(${index})">
-
-          ✅ OPGAVE FULDFØRT
-
-        </button>
-      `;
-
-      area.appendChild(card);
-    }
-  );
+    area.appendChild(card);
+  });
 }
-
 
 function prepareTask(index)
 {
+  if (!firebaseReady)
+  {
+    alert("Den fælles konto er ved at forbinde. Prøv igen om et øjeblik 😊");
+    return;
+  }
+
   const selector =
-    document.getElementById(
-      "task-child-" + index
-    );
+    document.getElementById("task-child-" + index);
 
-  const child =
-    selector.value;
-
+  const child = selector.value;
 
   if (!child)
   {
-    alert(
-      "Vælg først hvem der har lavet opgaven 😊"
-    );
-
+    alert("Vælg først hvem der har lavet opgaven 😊");
     return;
   }
 
+  const task = tasks[index];
 
-  const task =
-    tasks[index];
+  pendingTask = { index, child };
 
-
-  pendingTask =
-  {
-    index,
-    child
-  };
-
-
-  document.getElementById(
-    "confirmIcon"
-  ).textContent =
+  document.getElementById("confirmIcon").textContent =
     task.icon;
 
-
-  document.getElementById(
-    "confirmTitle"
-  ).textContent =
+  document.getElementById("confirmTitle").textContent =
     child + " – er opgaven færdig?";
 
-
-  document.getElementById(
-    "confirmText"
-  ).innerHTML =
-    `
+  document.getElementById("confirmText").innerHTML =
+  `
     <strong>${task.name}</strong><br><br>
     Hvis du trykker ja, får ${child}
     <strong>${task.value} kr.</strong>
-    `;
+  `;
 
-
-  document.getElementById(
-    "confirmOverlay"
-  ).style.display =
+  document.getElementById("confirmOverlay").style.display =
     "flex";
 }
 
-
 function closeConfirm()
 {
-  pendingTask =
-    null;
-
-  document.getElementById(
-    "confirmOverlay"
-  ).style.display =
+  pendingTask = null;
+  document.getElementById("confirmOverlay").style.display =
     "none";
 }
 
-
-function confirmTask()
+async function confirmTask()
 {
-  if (!pendingTask)
-  {
-    return;
-  }
+  if (!pendingTask || !firebaseReady) return;
 
+  const { index, child } = pendingTask;
+  const task = tasks[index];
+  const claimKey = child + "_" + index;
+  const now = Date.now();
 
-  const {
-    index,
-    child
-  } =
-    pendingTask;
-
-
-  const task =
-    tasks[index];
-
-
-  const claimKey =
-    child + "_" + index;
-
-
-  const now =
-    Date.now();
-
-
-  /*
-    Samme barn kan ikke registrere
-    præcis samme opgave igen indenfor
-    30 sekunder.
-
-    Det beskytter mod dobbelttryk,
-    men forhindrer ikke at en opgave
-    udføres igen senere.
-  */
-
+  // Beskytter mod hurtigt dobbelttryk på samme iPad.
   if (
     recentClaims[claimKey]
     &&
-    now - recentClaims[claimKey]
-      < 30000
+    now - recentClaims[claimKey] < 30000
   )
   {
     closeConfirm();
-
-    alert(
-      "Den opgave er lige blevet registreret 😊"
-    );
-
+    alert("Den opgave er lige blevet registreret 😊");
     return;
   }
 
+  recentClaims[claimKey] = now;
 
-  recentClaims[claimKey] =
-    now;
-
-
-  data.balances[child] +=
-    task.value;
-
-
-  data.history.unshift(
+  try
+  {
+    await firebaseFns.runTransaction(db, async transaction =>
     {
-      child,
-      task: task.name,
-      value: task.value,
-      time: now
-    }
-  );
+      const snap = await transaction.get(stateRef);
 
+      const balances =
+        snap.exists() && snap.data().balances
+        ? { ...snap.data().balances }
+        : emptyData().balances;
 
-  data.history =
-    data.history.slice(0,100);
+      children.forEach(name =>
+      {
+        if (typeof balances[name] !== "number")
+        {
+          balances[name] = 0;
+        }
+      });
 
+      balances[child] += task.value;
 
-  saveData();
+      transaction.set(stateRef, { balances });
 
-  updateScreen();
+      const historyRef =
+        firebaseFns.doc(firebaseFns.collection(db, "history"));
 
+      transaction.set(historyRef, {
+        child,
+        task: task.name,
+        value: task.value,
+        time: now,
+        createdAt: firebaseFns.serverTimestamp()
+      });
+    });
 
-  document.getElementById(
-    "task-child-" + index
-  ).value =
-    "";
+    document.getElementById("task-child-" + index).value = "";
+    closeConfirm();
 
-
-  closeConfirm();
-
-  showSuccess(
-    child,
-    task
-  );
+    // Saldoen bliver også opdateret live via Firestore-listeneren.
+    const taskForMessage = task;
+    setTimeout(() =>
+    {
+      showSuccess(child, taskForMessage);
+    }, 150);
+  }
+  catch (error)
+  {
+    recentClaims[claimKey] = 0;
+    console.error(error);
+    alert("Opgaven kunne ikke gemmes. Tjek internetforbindelsen og prøv igen.");
+  }
 }
-
 
 function updateScreen()
 {
-  children.forEach(
-    child =>
-    {
-      document.getElementById(
-        "balance-" + child
-      ).textContent =
-        data.balances[child]
-        + " kr.";
-    }
-  );
-
+  children.forEach(child =>
+  {
+    document.getElementById(
+      "balance-" + child
+    ).textContent =
+      data.balances[child] + " kr.";
+  });
 
   buildHistory();
 }
 
-
 function buildHistory()
 {
-  const area =
-    document.getElementById(
-      "history"
-    );
+  const area = document.getElementById("history");
 
-
-  if (
-    data.history.length === 0
-  )
+  if (data.history.length === 0)
   {
     area.innerHTML =
-      `
+    `
       <div class="empty-history">
         Ingen opgaver endnu.
         Vælg en mission ovenfor 🚀
       </div>
-      `;
-
+    `;
     return;
   }
 
-
   area.innerHTML =
     data.history
-    .slice(0,12)
-    .map(
-      historyRow
-    )
-    .join("");
+      .slice(0,12)
+      .map(historyRow)
+      .join("");
 }
-
 
 function historyRow(item)
 {
-  const date =
-    new Date(
-      item.time
-    );
+  const date = new Date(item.time);
 
+  const time = date.toLocaleString(
+    "da-DK",
+    {
+      day: "2-digit",
+      month: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit"
+    }
+  );
 
-  const time =
-    date.toLocaleString(
-      "da-DK",
-      {
-        day: "2-digit",
-        month: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit"
-      }
-    );
-
-
-  const minus =
-    item.value < 0;
-
-
+  const minus = item.value < 0;
   const money =
     item.value > 0
       ? "+" + item.value
       : item.value;
 
-
   return `
     <div class="history-item">
-
       <div>
-
         <div class="history-main">
-          ${item.child}
-          ·
-          ${item.task}
+          ${item.child} · ${item.task}
         </div>
-
-        <span class="history-time">
-          ${time}
-        </span>
-
+        <span class="history-time">${time}</span>
       </div>
-
       <div class="history-money ${minus ? "minus" : ""}">
         ${money} kr.
       </div>
-
     </div>
   `;
 }
-
 
 function openAccount(child)
 {
@@ -1421,350 +1379,237 @@ function openAccount(child)
     Leonora: "⭐"
   };
 
-
-  document.getElementById(
-    "accountIcon"
-  ).textContent =
+  document.getElementById("accountIcon").textContent =
     icons[child];
 
-
-  document.getElementById(
-    "accountName"
-  ).textContent =
+  document.getElementById("accountName").textContent =
     child + "s konto";
 
-
-  document.getElementById(
-    "accountTotal"
-  ).textContent =
-    data.balances[child]
-    + " kr.";
-
+  document.getElementById("accountTotal").textContent =
+    data.balances[child] + " kr.";
 
   const childHistory =
     data.history
-    .filter(
-      item =>
-        item.child === child
-    )
-    .slice(0,10);
-
+      .filter(item => item.child === child)
+      .slice(0,10);
 
   const area =
-    document.getElementById(
-      "accountHistory"
-    );
+    document.getElementById("accountHistory");
 
-
-  if (
-    childHistory.length === 0
-  )
+  if (childHistory.length === 0)
   {
     area.innerHTML =
-      `
+    `
       <div class="empty-history">
         Ingen opgaver endnu.
       </div>
-      `;
+    `;
   }
   else
   {
     area.innerHTML =
-      childHistory
-      .map(
-        historyRow
-      )
-      .join("");
+      childHistory.map(historyRow).join("");
   }
 
-
-  document.getElementById(
-    "accountOverlay"
-  ).style.display =
+  document.getElementById("accountOverlay").style.display =
     "flex";
 }
-
 
 function closeAccount()
 {
-  document.getElementById(
-    "accountOverlay"
-  ).style.display =
+  document.getElementById("accountOverlay").style.display =
     "none";
 }
 
-
-function showSuccess(
-  child,
-  task
-)
+function showSuccess(child, task)
 {
   launchConfetti();
 
-
-  const box =
-    document.createElement(
-      "div"
-    );
-
-
-  box.className =
-    "success";
-
+  const box = document.createElement("div");
+  box.className = "success";
 
   box.innerHTML =
   `
-    <div class="success-big">
-      🎉💰
-    </div>
-
-    <h2>
-      Godt arbejde,
-      ${child}!
-    </h2>
-
-    <p>
-      ${task.name}
-    </p>
-
-    <h2 style="color:#157448;">
-      +${task.value} kr.
-    </h2>
-
+    <div class="success-big">🎉💰</div>
+    <h2>Godt arbejde, ${child}!</h2>
+    <p>${task.name}</p>
+    <h2 style="color:#157448;">+${task.value} kr.</h2>
     <p>
       Du har nu
-      <strong>
-        ${data.balances[child]} kr.
-      </strong>
+      <strong>${data.balances[child]} kr.</strong>
     </p>
   `;
 
+  document.body.appendChild(box);
 
-  document.body.appendChild(
-    box
-  );
-
-
-  setTimeout(
-    () =>
-    {
-      box.remove();
-    },
-    2500
-  );
+  setTimeout(() =>
+  {
+    box.remove();
+  }, 2500);
 }
-
 
 function launchConfetti()
 {
-  const symbols =
-  [
-    "🎉",
-    "✨",
-    "💰",
-    "⭐",
-    "🪙"
-  ];
+  const symbols = ["🎉","✨","💰","⭐","🪙"];
 
-
-  for (
-    let i = 0;
-    i < 50;
-    i++
-  )
+  for (let i = 0; i < 50; i++)
   {
-    const piece =
-      document.createElement(
-        "div"
-      );
-
-
-    piece.className =
-      "confetti";
-
+    const piece = document.createElement("div");
+    piece.className = "confetti";
 
     piece.textContent =
-      symbols[
-        Math.floor(
-          Math.random()
-          *
-          symbols.length
-        )
-      ];
-
+      symbols[Math.floor(Math.random() * symbols.length)];
 
     piece.style.left =
-      Math.random()
-      * 100
-      + "vw";
-
+      Math.random() * 100 + "vw";
 
     piece.style.fontSize =
-      (
-        18
-        +
-        Math.random()
-        * 18
-      )
-      + "px";
-
+      (18 + Math.random() * 18) + "px";
 
     piece.style.animationDuration =
-      (
-        2
-        +
-        Math.random()
-        * 2.5
-      )
-      + "s";
+      (2 + Math.random() * 2.5) + "s";
 
+    document.body.appendChild(piece);
 
-    document.body.appendChild(
-      piece
-    );
-
-
-    setTimeout(
-      () =>
-      {
-        piece.remove();
-      },
-      5000
-    );
+    setTimeout(() =>
+    {
+      piece.remove();
+    }, 5000);
   }
 }
-
 
 function openReset()
 {
-  document.getElementById(
-    "resetOverlay"
-  ).style.display =
+  document.getElementById("resetOverlay").style.display =
     "flex";
 
-
-  document.getElementById(
-    "resetPin"
-  ).value =
-    "";
-
-
-  document.getElementById(
-    "resetError"
-  ).textContent =
-    "";
+  document.getElementById("resetPin").value = "";
+  document.getElementById("resetError").textContent = "";
 }
-
 
 function closeReset()
 {
-  document.getElementById(
-    "resetOverlay"
-  ).style.display =
+  document.getElementById("resetOverlay").style.display =
     "none";
 }
 
-
-function resetAccount()
+async function resetAccount()
 {
   const child =
-    document.getElementById(
-      "resetChild"
-    ).value;
-
+    document.getElementById("resetChild").value;
 
   const pin =
-    document.getElementById(
-      "resetPin"
-    ).value;
-
+    document.getElementById("resetPin").value;
 
   const error =
-    document.getElementById(
-      "resetError"
-    );
-
+    document.getElementById("resetError");
 
   if (!child)
   {
-    error.textContent =
-      "Vælg et barn.";
-
+    error.textContent = "Vælg et barn.";
     return;
   }
-
 
   if (pin !== "0605")
   {
-    error.textContent =
-      "Forkert kode.";
-
+    error.textContent = "Forkert kode.";
     return;
   }
 
+  if (!firebaseReady)
+  {
+    error.textContent =
+      "Den fælles konto er ikke forbundet endnu.";
+    return;
+  }
 
-  const amount =
-    data.balances[child];
-
+  const amount = data.balances[child];
 
   if (amount === 0)
   {
     error.textContent =
-      child
-      +
-      " har ingen penge at udbetale.";
-
+      child + " har ingen penge at udbetale.";
     return;
   }
 
-
-  const okay =
-    confirm(
-      "Har du overført "
-      +
-      amount
-      +
-      " kr. til "
-      +
-      child
-      +
-      "s bankkonto?"
-    );
-
-
-  if (!okay)
-  {
-    return;
-  }
-
-
-  data.history.unshift(
-    {
-      child,
-      task:
-        "💳 Udbetalt til bankkonto",
-      value:
-        -amount,
-      time:
-        Date.now()
-    }
+  const okay = confirm(
+    "Har du overført "
+    + amount
+    + " kr. til "
+    + child
+    + "s bankkonto?"
   );
 
+  if (!okay) return;
 
-  data.balances[child] =
-    0;
+  try
+  {
+    await firebaseFns.runTransaction(db, async transaction =>
+    {
+      const snap = await transaction.get(stateRef);
 
+      if (!snap.exists())
+      {
+        throw new Error("Saldo-dokumentet findes ikke.");
+      }
 
-  saveData();
+      const balances = { ...snap.data().balances };
 
-  updateScreen();
+      children.forEach(name =>
+      {
+        if (typeof balances[name] !== "number")
+        {
+          balances[name] = 0;
+        }
+      });
 
-  closeReset();
+      const liveAmount = balances[child];
+
+      if (liveAmount <= 0)
+      {
+        throw new Error("Saldoen er allerede nulstillet.");
+      }
+
+      balances[child] = 0;
+      transaction.set(stateRef, { balances });
+
+      const historyRef =
+        firebaseFns.doc(firebaseFns.collection(db, "history"));
+
+      transaction.set(historyRef, {
+        child,
+        task: "💳 Udbetalt til bankkonto",
+        value: -liveAmount,
+        time: Date.now(),
+        createdAt: firebaseFns.serverTimestamp()
+      });
+    });
+
+    closeReset();
+  }
+  catch (errorObject)
+  {
+    console.error(errorObject);
+    error.textContent =
+      "Udbetalingen kunne ikke gemmes. Prøv igen.";
+  }
 }
 
+// Gør funktionerne tilgængelige for HTML-knappernes onclick.
+Object.assign(window, {
+  prepareTask,
+  closeConfirm,
+  confirmTask,
+  openAccount,
+  closeAccount,
+  openReset,
+  closeReset,
+  resetAccount
+});
 
 buildTasks();
 updateScreen();
+startFirebase();
 
 </script>
 
